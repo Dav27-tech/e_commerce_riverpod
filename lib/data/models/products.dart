@@ -20,4 +20,18 @@ class Product {
     required this.brand,
     required this.stock,
   });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      price: (json['price'] as num).toDouble(),
+      imageUrl: json['imageUrl'],
+      rating: (json['rating'] as num).toDouble(),
+      category: json['category'],
+      brand: json['brand'],
+      stock: json['stock'],
+    );
+  }
 }
