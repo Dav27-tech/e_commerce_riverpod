@@ -48,4 +48,33 @@ class Product {
       'stock': stock,
     };
   }
+
+  Product copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? price,
+    String? imageUrl,
+    double? rating,
+    String? category,
+    String? brand,
+    int? stock,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      imageUrl: imageUrl ?? this.imageUrl,
+      rating: rating ?? this.rating,
+      category: category ?? this.category,
+      brand: brand ?? this.brand,
+      stock: stock ?? this.stock,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Product(id: $id, name: $name, price: $price)';
+  }
 }
