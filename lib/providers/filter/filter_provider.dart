@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/products.dart';
 import '../product/product_provider.dart';
 import '../../core/enums/sort_option.dart';
+import '../favorite/favorite_provider.dart';
 
 class SearchNotifier extends Notifier<String> {
   @override
@@ -91,4 +92,37 @@ final filteredProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
 
     return filtered;
   });
+});
+
+final favoriteProductsProvider =
+Provider<AsyncValue<List<Product>>>((ref) {
+  final productsAsync = ref.watch(productsProvider);
+  final favoritesAsync = ref.watch(favoritesProvider);
+
+  if (productsAsync.hasError) {
+    return AsyncError(
+      productsAsync.error!,
+      productsAsync.stackTrace!,
+    );
+  }
+
+  if (favoritesAsync.hasError) {
+    return AsyncError(
+      favoritesAsync.error!,
+      favoritesAsync.stackTrace!,
+    );
+  }
+
+  if (productsAsync.isLoading || favoritesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+
+  final products = productsAsync.requireValue;
+  final favoriteIds = favoritesAsync.requireValue;
+
+  final favoriteProducts = products
+      .where((product) => favoriteIds.contains(product.id))
+      .toList();
+
+  return AsyncData(favoriteProducts);
 });
