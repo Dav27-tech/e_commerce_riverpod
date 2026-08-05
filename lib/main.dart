@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/theme/app_theme.dart';
+
 void main() {
   runApp(
     const ProviderScope(
@@ -16,11 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('E-Commerce App'),
-        ),
-        body: const Center(
+      theme: AppTheme.lightTheme,
+      home: const Scaffold(
+        body: Center(
           child: Text('Bienvenue dans notre application'),
         ),
       ),
