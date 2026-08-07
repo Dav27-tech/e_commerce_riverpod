@@ -20,31 +20,45 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: _onDestinationSelected,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Accueil',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite_outline),
-            selectedIcon: Icon(Icons.favorite),
-            label: 'Favoris',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.shopping_bag_outlined),
-            selectedIcon: Icon(Icons.shopping_bag),
-            label: 'Panier',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: _onDestinationSelected,
+          elevation: 0,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          indicatorColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_rounded),
+              selectedIcon: Icon(Icons.home_rounded, color: Theme.of(context).colorScheme.primary),
+              label: 'Accueil',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.favorite_rounded),
+              selectedIcon: Icon(Icons.favorite_rounded, color: Theme.of(context).colorScheme.primary),
+              label: 'Favoris',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.shopping_bag_rounded),
+              selectedIcon: Icon(Icons.shopping_bag_rounded, color: Theme.of(context).colorScheme.primary),
+              label: 'Panier',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.person_rounded),
+              selectedIcon: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.primary),
+              label: 'Profil',
+            ),
+          ],
+        ),
       ),
     );
   }
