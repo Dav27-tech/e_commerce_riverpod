@@ -1,13 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/models/products.dart';
-import '../product/product_provider.dart';
 import '../../core/enums/sort_option.dart';
+import '../../data/models/products.dart';
 import '../favorite/favorite_provider.dart';
+import '../product/product_provider.dart';
+
+
+// -----------------------------------------------------------------------------
+// SEARCH
+// -----------------------------------------------------------------------------
 
 class SearchNotifier extends Notifier<String> {
   @override
-  String build() => '';
+  String build() {
+    return '';
+  }
 
   void setSearch(String value) {
     state = value;
@@ -22,12 +29,19 @@ final searchProvider = NotifierProvider<SearchNotifier, String>(
   SearchNotifier.new,
 );
 
+
+// -----------------------------------------------------------------------------
+// CATEGORY
+// -----------------------------------------------------------------------------
+
 class CategoryNotifier extends Notifier<String> {
   @override
-  String build() => 'All';
+  String build() {
+    return 'All';
+  }
 
-  void setCategory(String value) {
-    state = value;
+  void setCategory(String category) {
+    state = category;
   }
 
   void reset() {
@@ -39,9 +53,16 @@ final categoryProvider = NotifierProvider<CategoryNotifier, String>(
   CategoryNotifier.new,
 );
 
+
+// -----------------------------------------------------------------------------
+// SORT
+// -----------------------------------------------------------------------------
+
 class SortNotifier extends Notifier<SortOption> {
   @override
-  SortOption build() => SortOption.none;
+  SortOption build() {
+    return SortOption.none;
+  }
 
   void setSort(SortOption option) {
     state = option;
@@ -56,43 +77,97 @@ final sortProvider = NotifierProvider<SortNotifier, SortOption>(
   SortNotifier.new,
 );
 
-final filteredProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
+
+// -----------------------------------------------------------------------------
+// CATEGORIES AVAILABLE
+// -----------------------------------------------------------------------------
+
+final categoriesProvider =
+Provider<AsyncValue<List<String>>>((ref) {
   final productsAsync = ref.watch(productsProvider);
-  final query = ref.watch(searchProvider).trim().toLowerCase();
-  final category = ref.watch(categoryProvider);
-  final sortOption = ref.watch(sortProvider);
 
   return productsAsync.whenData((products) {
-    var filtered = products.where((product) {
-      final matchesSearch = product.title.toLowerCase().contains(query) ||
-          product.brand.toLowerCase().contains(query);
+    final categories = products
+        .map((product) => product.category)
+        .toSet()
+        .toList()
+      ..sort();
+
+    return [
+      'All',
+      ...categories,
+    ];
+  });
+});
+
+
+// -----------------------------------------------------------------------------
+// FILTERED AND SORTED PRODUCTS
+// -----------------------------------------------------------------------------
+
+final filteredProductsProvider =
+Provider<AsyncValue<List<Product>>>((ref) {
+  final productsAsync = ref.watch(productsProvider);
+
+  final searchQuery =
+  ref.watch(searchProvider).trim().toLowerCase();
+
+  final selectedCategory =
+  ref.watch(categoryProvider);
+
+  final selectedSort =
+  ref.watch(sortProvider);
+
+  return productsAsync.whenData((products) {
+    var filteredProducts = products.where((product) {
+      final matchesSearch =
+          product.title.toLowerCase().contains(searchQuery) ||
+              product.brand.toLowerCase().contains(searchQuery);
 
       final matchesCategory =
-      category == 'All' ? true : product.category == category;
+          selectedCategory == 'All' ||
+              product.category == selectedCategory;
 
       return matchesSearch && matchesCategory;
     }).toList();
 
-    switch (sortOption) {
+    switch (selectedSort) {
       case SortOption.priceAsc:
-        filtered.sort((a, b) => a.price.compareTo(b.price));
+        filteredProducts.sort(
+              (a, b) => a.price.compareTo(b.price),
+        );
         break;
+
       case SortOption.priceDesc:
-        filtered.sort((a, b) => b.price.compareTo(a.price));
+        filteredProducts.sort(
+              (a, b) => b.price.compareTo(a.price),
+        );
         break;
+
       case SortOption.ratingDesc:
-        filtered.sort((a, b) => b.rating.compareTo(a.rating));
+        filteredProducts.sort(
+              (a, b) => b.rating.compareTo(a.rating),
+        );
         break;
+
       case SortOption.nameAsc:
-        filtered.sort((a, b) => a.title.compareTo(b.title));
+        filteredProducts.sort(
+              (a, b) => a.title.compareTo(b.title),
+        );
         break;
+
       case SortOption.none:
         break;
     }
 
-    return filtered;
+    return filteredProducts;
   });
 });
+
+
+// -----------------------------------------------------------------------------
+// FAVORITE PRODUCTS
+// -----------------------------------------------------------------------------
 
 final favoriteProductsProvider =
 Provider<AsyncValue<List<Product>>>((ref) {
@@ -113,15 +188,19 @@ Provider<AsyncValue<List<Product>>>((ref) {
     );
   }
 
-  if (productsAsync.isLoading || favoritesAsync.isLoading) {
+  if (productsAsync.isLoading ||
+      favoritesAsync.isLoading) {
     return const AsyncLoading();
   }
 
-  final products = productsAsync.requireValue;
-  final favoriteIds = favoritesAsync.requireValue;
+  final products = productsAsync.value ?? [];
+  final favoriteIds =
+      favoritesAsync.value ?? <int>{};
 
   final favoriteProducts = products
-      .where((product) => favoriteIds.contains(product.id))
+      .where(
+        (product) => favoriteIds.contains(product.id),
+  )
       .toList();
 
   return AsyncData(favoriteProducts);
