@@ -1,0 +1,12 @@
+- [x] Moderniser le Header et les Filtres (`home_page.dart`)
+    - [x] Ajouter l'icône de notification (cloche)
+    - [x] Mettre à jour le texte de bienvenue
+    - [x] Ajouter une illustration de bienvenue
+    - [x] Implémenter les filtres de catégories fluides
+    - [x] Moderniser le bouton de tri
+- [x] Améliorer la Barre de Navigation (`app_shell.dart`)
+    - [x] Utiliser des icônes "Rounded"
+    - [x] Appliquer un style plus moderne (couleurs, indicateur)
+- [x] Vérification et Finalisation
+    - [x] Tester la fluidité des interactions
+    - [x] Créer le walkthrough final
