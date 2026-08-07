@@ -1,43 +1,47 @@
 class Product {
-  final String id;
+  final int id;
   final String title;
   final String description;
-  final double price;
-  final String thumbnail;
-  final double rating;
   final String category;
-  final String brand;
-  final int stock;
+  final double price;
   final double discountPercentage;
+  final double rating;
+  final int stock;
+  final String brand;
+  final String thumbnail;
   final List<String> images;
 
   const Product({
     required this.id,
     required this.title,
     required this.description,
-    required this.price,
-    required this.thumbnail,
-    required this.rating,
     required this.category,
-    required this.brand,
-    required this.stock,
+    required this.price,
     required this.discountPercentage,
+    required this.rating,
+    required this.stock,
+    required this.brand,
+    required this.thumbnail,
     required this.images,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      price: (json['price'] as num).toDouble(),
-      thumbnail: json['thumbnail'],
-      rating: (json['rating'] as num).toDouble(),
-      category: json['category'],
-      brand: json['brand'],
-      stock: json['stock'],
-      discountPercentage: (json['discountPercentage'] as num).toDouble(),
-      images: List<String>.from(json['images']),
+      id: json['id'] as int,
+      title: json['title'] as String? ?? 'Sans titre',
+      description: json['description'] as String? ?? '',
+      category: json['category'] as String? ?? 'Uncategorized',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      discountPercentage:
+      (json['discountPercentage'] as num?)?.toDouble() ?? 0.0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      stock: json['stock'] as int? ?? 0,
+      brand: json['brand'] as String? ?? 'Unknown',
+      thumbnail: json['thumbnail'] as String? ?? '',
+      images: (json['images'] as List<dynamic>?)
+          ?.map((image) => image.toString())
+          .toList() ??
+          [],
     );
   }
 
@@ -46,47 +50,54 @@ class Product {
       'id': id,
       'title': title,
       'description': description,
-      'price': price,
-      'thumbnail': thumbnail,
-      'rating': rating,
       'category': category,
-      'brand': brand,
-      'stock': stock,
+      'price': price,
       'discountPercentage': discountPercentage,
+      'rating': rating,
+      'stock': stock,
+      'brand': brand,
+      'thumbnail': thumbnail,
       'images': images,
     };
   }
 
   Product copyWith({
-    String? id,
+    int? id,
     String? title,
     String? description,
-    double? price,
-    String? thumbnail,
-    double? rating,
     String? category,
-    String? brand,
-    int? stock,
+    double? price,
     double? discountPercentage,
+    double? rating,
+    int? stock,
+    String? brand,
+    String? thumbnail,
     List<String>? images,
   }) {
     return Product(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
-      price: price ?? this.price,
-      thumbnail: thumbnail ?? this.thumbnail,
-      rating: rating ?? this.rating,
       category: category ?? this.category,
-      brand: brand ?? this.brand,
+      price: price ?? this.price,
+      discountPercentage:
+      discountPercentage ?? this.discountPercentage,
+      rating: rating ?? this.rating,
       stock: stock ?? this.stock,
-      discountPercentage: discountPercentage ?? this.discountPercentage,
+      brand: brand ?? this.brand,
+      thumbnail: thumbnail ?? this.thumbnail,
       images: images ?? this.images,
     );
   }
 
   @override
   String toString() {
-    return 'Product(id: $id, title: $title, price: $price)';
+    return 'Product('
+        'id: $id, '
+        'title: $title, '
+        'brand: $brand, '
+        'price: $price, '
+        'stock: $stock'
+        ')';
   }
 }
