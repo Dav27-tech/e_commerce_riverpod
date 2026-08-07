@@ -8,12 +8,21 @@ class ProductRemoteDataSource {
 
   Future<List<Product>> getProducts() async {
     try {
-      final response = await _dio.get('/products');
+      final response = await _dio.get(
+        '/products',
+        queryParameters: {
+          'limit': 0,
+        },
+      );
 
       final List<dynamic> data = response.data['products'];
 
       return data
-          .map((json) => Product.fromJson(json))
+          .map(
+            (json) => Product.fromJson(
+          json as Map<String, dynamic>,
+        ),
+      )
           .toList();
     } catch (e) {
       throw Exception('Impossible de charger les produits : $e');
